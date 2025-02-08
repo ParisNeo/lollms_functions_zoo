@@ -1,0 +1,13 @@
+name: get_time
+description: Get the current server time
+parameters: {}
+returns:
+  current_time:
+    type: string
+    format: date-time
+    description: ISO format timestamp of current server time
+examples:
+  - "What time is it right now?"
+  - "Can you tell me the current time?"
+author: System
+version: 1.0.0
