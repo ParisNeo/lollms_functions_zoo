@@ -45,16 +45,19 @@ class LongTermMemoryFunction(FunctionCall):
             with open(self.memory_path, "r", encoding="utf-8") as f:
                 current_memory = f.read().strip()
 
+            if not current_memory:
+                current_memory="No memories found yet."
             # Create memory update prompt
-            update_prompt = f"""## Existing Memory:
+            update_prompt = f"""{self.app.template.system_full_header}Act as a memory shaping assistant. Use the existing memory as well as the cirrent interaction to build the new memory.
+{self.app.template.system_custom_header('Existing Memory')}
 {current_memory}
 
-## New Interaction:
-[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]
-Prompt: {context.prompt}
-Response: {llm_output}
+{self.app.template.system_custom_header('New Interaction')}
+date:{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+prompt:{context.prompt}
+response:{llm_output}
 
-## Instructions:
+{self.app.template.system_custom_header('Instructions')}
 As a memory manager, update the long-term memory by:
 1. Adding important new information (facts, preferences, unique details)
 2. Removing redundant/irrelevant information
@@ -62,10 +65,17 @@ As a memory manager, update the long-term memory by:
 4. Keeping entries concise
 5. Preserving crucial historical context
 
-Output ONLY the updated memory content, without any additional commentary or formatting."""
+Example of memory entry
+--
+Date: the date 
+Information: interesting information extracted either from previous memories or current one
+--
+
+Output ONLY the updated memory content, without any additional commentary or formatting.
+{self.app.template.ai_custom_header('assistant')}"""
 
             # Generate updated memory using AI
-            updated_memory = self.personality.fast_gen(update_prompt, max_generation_size=2000)
+            updated_memory = self.personality.fast_gen(update_prompt, max_generation_size=2000,callback=self.personality.sink)
             
             # Save the AI-curated memory
             with open(self.memory_path, "w", encoding="utf-8") as f:
