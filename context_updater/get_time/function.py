@@ -16,4 +16,6 @@ class GetTimeFunction (FunctionCall):
     def update_context(self, context: LollmsContextDetails, contructed_context:List[str]):
         contructed_context.append(f"Current date/time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         return contructed_context
-        
+    
+    def process_output(self, context: LollmsContextDetails, llm_output:str):
+        return llm_output       
