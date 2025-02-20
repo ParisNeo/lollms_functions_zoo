@@ -55,6 +55,8 @@ version: 1.0.0
 from lollms.function_call import FunctionCall, FunctionType
 from lollms.app import LollmsApplication
 from lollms.client_session import Client
+from lollms.prompting import LollmsContextDetails
+from ascii_colors import ASCIIColors, trace_exception
 # Use pipmaster to check and install any missing module by its name
 import pipmaster as pm
 if not pm.is_installed("module name"):
@@ -109,6 +111,8 @@ class MyFunction(FunctionCall): #use the same name as class_name from the yaml f
         # llm_output contains the AI output, we still have access to the context if needed.
         # return a string 
 ```
+
+Make sure the python code structure respects and implements the right methods.
 """
         constructed_context.append(instructions)
         return constructed_context

@@ -5,7 +5,6 @@ description: A function that helps the AI build other functions by generating Py
   and YAML files.
 last_update_date_time: '2025-02-19T23:01:37.849192'
 name: build_classic_function_call
-static_parameters: []
 parameters: []
 returns:
   status:
