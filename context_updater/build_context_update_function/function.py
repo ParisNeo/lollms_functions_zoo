@@ -30,7 +30,7 @@ The AI will generate the Python and YAML files for you. Here’s an example:
 
 ```yaml
 author: The user name (default to ParisNeo)
-category: custom
+category: custom # must be custom as this is a custom function
 class_name: MyFunction
 name: my_function
 description: A custom function.
@@ -62,15 +62,15 @@ if not pm.is_installed("module name"):
 
 
 class MyFunction(FunctionCall): #use the same name as class_name from the yaml file
-    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict):
-    def __init__(self, app: LollmsApplication, client: Client):
-        super().__init__(FunctionType.CLASSIC, client)
+    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict={}):
+        super().__init__(FunctionType.CONTEXT_UPDATE, client)
         self.app = app
+        # Make sur to use app.lollms_paths.personal_outputs_path for any output files the function will output unless secified by the user
         self.personality = app.personality # Personlity has many usefil LLM tools
         # Here are some of the functionalities of personality
         # 1 we can extract all code blocks from a string (useful if we need to make the AI build a code to execute or save)
         # self.personality.extract_code_blocks(llm_output)
-        # 
+        
     def update_context(self, context: LollmsContextDetails, constructed_context: List[str]):
         # Here you can add more instructions to the AI so that it can perform the task provided by the user correctly
         # You need to update the constructed_context list by adding extra information

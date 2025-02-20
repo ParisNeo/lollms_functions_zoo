@@ -29,7 +29,7 @@ The AI will generate the Python and YAML files for you. Here’s an example:
 
 ```yaml
 author: The user name (default to ParisNeo)
-category: custom
+category: custom # must be custom as this is a custom function
 class_name: MyFunction
 name: my_function
 description: A custom function.
@@ -61,10 +61,12 @@ if not pm.is_installed("module name"):
 
 
 class MyFunction(FunctionCall): #use the same name as class_name from the yaml file
-    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict):
+    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict={}):
         super().__init__(FunctionType.CLASSIC, client)
         self.app = app
-        # extract the static parameters from the dictionary here. these are parameters that can be set by the user in the settings of the function call in the ui.
+        # Make sur to use app.lollms_paths.personal_outputs_path for any output files the function will output unless secified by the user
+ 
+        # Extract the static parameters from the dictionary here. these are parameters that can be set by the user in the settings of the function call in the ui.
         # it is a simple dictionary
         self.personality = app.personality # Personlity has many usefil LLM tools
         # Here are some of the functionalities of personality

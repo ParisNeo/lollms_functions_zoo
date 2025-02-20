@@ -11,4 +11,5 @@ returns:
   status:
     description: The status of the function creation process.
     type: str
+static_parameters: []
 version: 1.0.0

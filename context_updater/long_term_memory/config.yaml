@@ -9,7 +9,8 @@ examples:
 - Can you tell me the current time?
 last_update_date_time: '2025-02-09T23:05:21.407756'
 name: long_term_memory
-parameters: {}
+static_parameters: []
+parameters: []
 returns:
   current_time:
     description: ISO format timestamp of current server time
