@@ -23,15 +23,17 @@ class DownloadYoutubeTranscript(FunctionCall):
             language_code = kwargs.get("language_code", "en")
 
             # Fetching the transcript
-            transcript = YouTubeTranscriptApi.get_transcript(video_id, (language_code,))
+            try:
+                transcript = YouTubeTranscriptApi.get_transcript(video_id, (language_code,))
 
-            # Combining the transcript into a single string
-            transcript_text = " ".join([entry['text'] for entry in transcript])
+                # Combining the transcript into a single string
+                transcript_text = " ".join([entry['text'] for entry in transcript])
 
-            ASCIIColors.magenta("---- Transcript ----")
-            ASCIIColors.magenta(transcript_text)
-            ASCIIColors.magenta("----")
-
+                ASCIIColors.magenta("---- Transcript ----")
+                ASCIIColors.magenta(transcript_text)
+                ASCIIColors.magenta("----")
+            except :
+                transcript = f"Couldn't recover the transcript of this video in the language {language_code}"
             return transcript_text
 
         except Exception as e:

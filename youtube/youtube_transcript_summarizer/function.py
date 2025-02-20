@@ -54,7 +54,8 @@ class YoutubeTranscriptSummarizer(FunctionCall):
             # First, check if the user wants to summarize a YouTube video
             is_youtube_summary = self.personality.yes_no(
                 question="Is the user asking to recover and summarize a YouTube video transcript?",
-                context=context.prompt
+                context=context.prompt,
+                callback=self.personality.sink
             )
 
             if not is_youtube_summary:

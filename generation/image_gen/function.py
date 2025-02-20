@@ -65,7 +65,6 @@ def build_image(prompt, negative_prompt, width, height, personality:AIPersonalit
         else:
             return f"Couldn't generate image. Make sure {personality.config.active_tti_service} service is installed"
 
-
 def build_image_from_simple_prompt(prompt, personality:AIPersonality, client:Client, width=1024, height=1024, examples_extraction_mathod="random", number_of_examples_to_recover=3, production_type="artwork", max_generation_prompt_size=1024):
     examples = ""
     expmls = []
