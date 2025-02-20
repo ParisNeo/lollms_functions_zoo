@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import List
 
 class LongTermMemoryFunction(FunctionCall):
-    def __init__(self, app: LollmsApplication, client: Client):
+    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict={}):
         super().__init__(FunctionType.CONTEXT_UPDATE, client)
         self.app = app
         self.personality = app.personality

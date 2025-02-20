@@ -96,7 +96,7 @@ def build_image_from_simple_prompt(prompt, personality:AIPersonality, client:Cli
 
 
 class ImageGen (FunctionCall):
-    def __init__(self, app: LollmsApplication, client: Client):
+    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict={}):
         super().__init__(FunctionType.CLASSIC, client)
         self.app = app
         self.personality = app.personality
