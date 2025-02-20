@@ -64,38 +64,51 @@ class MyFunction(FunctionCall): #use the same name as class_name from the yaml f
     def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict={}):
         super().__init__(FunctionType.CLASSIC, client)
         self.app = app
-        # Make sur to use app.lollms_paths.personal_outputs_path for any output files the function will output unless secified by the user
- 
-        # Extract the static parameters from the dictionary here. these are parameters that can be set by the user in the settings of the function call in the ui.
-        # it is a simple dictionary
+        \"\"\"
+        Make sur to use app.lollms_paths.personal_outputs_path for any output files the function will output unless secified by the user
+        Extract the static parameters from the dictionary here. these are parameters that can be set by the user in the settings of the function call in the ui.
+        it is a simple dictionary
+        \"\"\"
         self.personality = app.personality # Personlity has many usefil LLM tools
-        # Here are some of the functionalities of personality
-        # 1 we can call an LLM and make it generate text using fastgen method
-        # text = self.personality.fastgen(prompt, callback=None)
-        # callback is optional if used then it must be a function that takes the generated chunk, the chunk_type and a dict containing information
-        #use self.personality.sink to prevent showing the generation chunks to the user.
-        # summary = self.personality.sequential_summarize(
-        #   text, # The text to summerize
-        #   summary_context="", # this is a prompt to the ai when it is extracting information from the chunks and updating its memory content before doing the final extraction
-        #   task="Create final summary using this memory.", # the final text synthesis after recovering all important informations from the text
-        #   format="bullet points", #The output format
-        #   tone="neutral", # The tone
-        #   ctx_size=4096, #the size of context
-        #   callback = None)
-        # Ask the AI yes no question. Very useful to understand some text if we have two possibilities
-        # answer = self.personality.yesno(
-        #   question: str, # the question
-        #   context:str="", # context about which the question is asked
-        #   max_answer_length: int = None, conditionning="", return_explanation=False, callback = None)
-        # 2 we can ask the ai to generate code 
-        # self.personality.fastgen(prompt)
+        \"\"\"
+        Here are some of the functionalities of personality
+        1 we can call an LLM and make it generate text using fastgen method
+        text = self.personality.fastgen(prompt, callback=None)
+        callback is optional if used then it must be a function that takes the generated chunk, the chunk_type and a dict containing information
+        use self.personality.sink to prevent showing the generation chunks to the user.
+        summary = self.personality.sequential_summarize(
+          text, # The text to summerize
+          summary_context="", # this is a prompt to the ai when it is extracting information from the chunks and updating its memory content before doing the final extraction
+          task="Create final summary using this memory.", # the final text synthesis after recovering all important informations from the text
+          format="bullet points", #The output format
+          tone="neutral", # The tone
+          ctx_size=4096, #the size of context
+          callback = None)
+        Ask the AI yes no question. Very useful to understand some text if we have two possibilities
+        answer = self.personality.yes_no(
+          question: str, # the question
+          context:str="", # context about which the question is asked (must be string)
+          max_answer_length: int = None, conditionning="", return_explanation=False, callback = None)
+        2 we can ask the ai to generate code 
+        self.personality.generate_code(       
+            prompt,         # The code generation prompt
+            images=[],      # optional, if the user needs to use an image that contains the algorithm or some information he can send images here
+            template=None,  # A template of the code (for example if it is json, a template of the json)
+            language="json",# The language of the output
+            code_tag_format="markdown",  # or "html" 
+            accept_all_if_no_code_tags_is_present=False, 
+            max_continues=3, #Maximum number of continues if the llm did not generate a complete text
+            include_code_directives=True  # Make code directives optional
+        )
+        the output is a string containing the code
+        \"\"\"
+        
     def execute(self, *args, **kwargs):
         # You can recover the parameters stated in the yaml from kwargs
-        #use kwargs.get("the parameter name",default value)
+        # use kwargs.get("the parameter name",default value) to recover the parameters
+        # here do the requested functionality of the function call and return a string
         return "Your output as a string"
 ```
-
-
 """
         constructed_context.append(instructions)
         return constructed_context
