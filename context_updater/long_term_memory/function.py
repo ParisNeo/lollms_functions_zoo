@@ -29,6 +29,11 @@ class LongTermMemoryFunction(FunctionCall):
             
             if memory_content:
                 constructed_context.append(
+                    "--------- Long term memory -------\n"
+                    "Long term memory contains important things you may need to know\n"
+                    "It depicts important past information you need to know.\n"
+                    "It will be automatically updated from the user prompt and your text.\n"
+                    "Useless or irrelevant information can be removed just by saying so.\n"
                     f"Long-term memory (last updated {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}):\n"
                     f"{memory_content}\n"
                     "----------------------"

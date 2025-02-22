@@ -14,6 +14,11 @@ parameters:
     name. Use adjectives like beautiful, High res, detailed etc..
   name: prompt
   type: str
+- description: the negative prompt to be passed to the generation app. Make sure it
+    contains a list of things you don't want to see in the generated image like blurry,
+    deformed, ugly, badly rendered, low res, mutilated, watermak etc
+  name: negative_prompt
+  type: str
 - description: the width of the image to generate (default 1024)
   name: width
   type: int
