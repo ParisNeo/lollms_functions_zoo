@@ -34,6 +34,7 @@ class LongTermMemoryFunction(FunctionCall):
                     "It depicts important past information you need to know.\n"
                     "It will be automatically updated from the user prompt and your text.\n"
                     "Useless or irrelevant information can be removed just by saying so.\n"
+                    "If the user asks to change the momory or to remove an entry confirm and it will be updated/removed by the system.\n"
                     f"Long-term memory (last updated {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}):\n"
                     f"{memory_content}\n"
                     "----------------------"
@@ -46,6 +47,7 @@ class LongTermMemoryFunction(FunctionCall):
     def process_output(self, context: LollmsContextDetails, llm_output: str):
         """Use AI to curate and update memory with important information"""
         try:
+            self.personality.step_start("Updating long term memory")
             # Read existing memory
             with open(self.memory_path, "r", encoding="utf-8") as f:
                 current_memory = f.read().strip()
@@ -85,8 +87,10 @@ Output ONLY the updated memory content, without any additional commentary or for
             # Save the AI-curated memory
             with open(self.memory_path, "w", encoding="utf-8") as f:
                 f.write(updated_memory.strip())
+            self.personality.step_end("Updating long term memory")
 
         except Exception as e:
             self.app.error(f"Error updating memory file: {e}")
-        
+            self.personality.step_end("Updating long term memory", False)
+
         return llm_output
