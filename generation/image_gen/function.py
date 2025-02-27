@@ -72,7 +72,8 @@ class ImageGen (FunctionCall):
         self.app = app
         self.personality = app.personality
         self.model = app.model
-    def execute(self, *args, **kwargs):
+
+    def execute(self, context, *args, **kwargs):
         prompt = kwargs.get("prompt","")
         negative_prompt = kwargs.get("negative_prompt","")
         width = kwargs.get("width",1024)

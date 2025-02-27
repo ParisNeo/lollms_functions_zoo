@@ -37,6 +37,7 @@ static_parameters: #static parameters are parameters set by the user not by the 
 - name: the static parameter name
   type: the type
   description: the description
+  default: a mandatory default value
   ...
 parameters: # Parameters are parameters that do change depending on the request
 - name: param1
@@ -54,6 +55,12 @@ version: 1.0.0
 from lollms.function_call import FunctionCall, FunctionType
 from lollms.app import LollmsApplication
 from lollms.client_session import Client
+from lollms.prompting import LollmsContextDetails
+from datetime import datetime
+import yaml
+from typing import List
+from ascii_colors import ASCIIColors, trace_exception
+
 #Use pipmaster to check and install any missing module by its name
 import pipmaster as pm
 if not pm.is_installed("module name"):
@@ -93,20 +100,59 @@ class MyFunction(FunctionCall): #use the same name as class_name from the yaml f
         self.personality.generate_code(       
             prompt,         # The code generation prompt
             images=[],      # optional, if the user needs to use an image that contains the algorithm or some information he can send images here
-            template=None,  # A template of the code (for example if it is json, a template of the json)
-            language="json",# The language of the output
-            code_tag_format="markdown",  # or "html" 
-            accept_all_if_no_code_tags_is_present=False, 
-            max_continues=3, #Maximum number of continues if the llm did not generate a complete text
-            include_code_directives=True  # Make code directives optional
+            template:str|None=None,  # A template of the code (for example if it is json, a template of the json) (thisis a string)
+            language:str="json",# The language of the output
+            code_tag_format:str="markdown",  # or "html" 
+            accept_all_if_no_code_tags_is_present:bool=False, 
+            max_continues:int=3, #Maximum number of continues if the llm did not generate a complete text
+            include_code_directives:int=True  # Make code directives optional
         )
         the output is a string containing the code
+        full_context = context.build_prompt(self.app.template,custom_entries=[#here we can add other text entries to be added at the end of the context#]) #this creates a full prompt out of the context
         \"\"\"
+
+    def update_context(self, context: LollmsContextDetails, constructed_context: List[str]):
+        # Here you can add more instructions to the AI so that it can perform the task provided by the user correctly
+        # You need to update the constructed_context list by adding extra information
+        # You have access to all these informations from the context parameter:
+        # --
+        # client (str): Unique identifier for the client or user interacting with the LLM.
+        # conditionning (Optional[str]): Optional field to store conditioning information or context for the LLM.
+        # internet_search_infos (Optional[Dict]): Dictionary to store metadata or details about internet searches performed by the LLM.
+        # internet_search_results (Optional[List]): List to store the results of internet searches performed by the LLM.
+        # documentation (Optional[str]): Optional field to store documentation or reference material for the LLM.
+        # documentation_entries (Optional[List]): List to store individual entries or sections of documentation.
+        # user_description (Optional[str]): Optional field to store a description or profile of the user.
+        # discussion_messages (Optional[List]): List to store the history of messages in the current discussion or conversation.
+        # positive_boost (Optional[float]): Optional field to store a positive boost value for influencing LLM behavior.
+        # negative_boost (Optional[float]): Optional field to store a negative boost value for influencing LLM behavior.
+        # current_language (Optional[str]): Optional field to store the current language being used in the interaction.
+        # fun_mode (Optional[bool]): Optional boolean field to enable or disable "fun mode" for the LLM.
+        # think_first_mode (Optional[bool]): Optional boolean field to enable or disable "think first mode" for the LLM.
+        # ai_prefix (Optional[str]): Optional field to store a prefix or identifier for the AI in the conversation.
+        # extra (Optional[str]): Optional field to store additional custom or extra information.
+        # available_space (Optional[int]): Optional field to store the available space or capacity for the context.
+        # skills (Optional[Dict]): Dictionary to store skills or capabilities of the LLM.
+        # is_continue (Optional[bool]): Optional boolean field to indicate if the LLM is continuing from a previous chunk or context.
+        # previous_chunk (Optional[str]): Optional field to store the previous chunk of text or context.
+        # prompt (Optional[str]): Optional field to store the current prompt or input for the LLM.
+        # function_calls (Optional[List]): List to store function calls or actions performed by the LLM.
+        # debug (bool): Enable or disable debug mode.
+        # ctx_size (int): The maximum context size for the LLM.
+        # max_n_predict (Optional[int]): The maximum number of tokens to generate.
+        # model : The model (required to perform tokenization)
+        # --
+        # if you don't need to add anything to the context, just return the received constructed_context without changes
+        # Do not put in the context information about the parameters of the function as it will automatically be added
+        # Only use it if you need some extra information for the AI to call the function with more context information 
+        # return the updated constructed_context        
         
-    def execute(self, *args, **kwargs):
+    def execute(self, context: LollmsContextDetails, *args, **kwargs):
         # You can recover the parameters stated in the yaml from kwargs
         # use kwargs.get("the parameter name",default value) to recover the parameters
         # here do the requested functionality of the function call and return a string
+        #if the performed action needs to be reviewed by an llm before outputting a resule, 
+        # use self.personality.fastgen or self.personality.generate_code to generate the output then return that output
         return "Your output as a string"
 ```
 """
