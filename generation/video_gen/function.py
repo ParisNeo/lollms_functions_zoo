@@ -58,19 +58,21 @@ def build_video(    app,
                         )
             personality.step_end("Generating video")
             
-        file = infos["videos"][0]["video_url"]
-        escaped_url =  discussion_path_to_url(file)
+            file = infos["videos"][0]["video_url"]
+            escaped_url =  discussion_path_to_url(file)
 
-        if return_format == "markdown":
-            return f'\n![]({escaped_url})'
-        elif return_format == "url":
-            return escaped_url
-        elif return_format == "path":
-            return file
-        elif return_format == "url_and_path":
-            return {"url": escaped_url, "path": file}
+            if return_format == "markdown":
+                return f'\n![]({escaped_url})'
+            elif return_format == "url":
+                return escaped_url
+            elif return_format == "path":
+                return file
+            elif return_format == "url_and_path":
+                return {"url": escaped_url, "path": file}
+            else:
+                return f"Invalid return_format: {return_format}. Supported formats are 'markdown', 'url', 'path', and 'url_and_path'."
         else:
-            return f"Invalid return_format: {return_format}. Supported formats are 'markdown', 'url', 'path', and 'url_and_path'."
+            return "No text to video service is configured. Please configure a service in the settings."
     except Exception as ex:
         trace_exception(ex)
         if return_format == "markdown":
@@ -98,6 +100,6 @@ class VideoGen (FunctionCall):
         width = kwargs.get("width",1024)
         height = kwargs.get("height",512)
         
-        return build_video(prompt, negative_prompt,width, height, self.personality, self.client)
+        return build_video(self.app, prompt, negative_prompt,width, height, self.personality, self.client)
     
         
