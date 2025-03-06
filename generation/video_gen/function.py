@@ -24,10 +24,9 @@ def build_negative_prompt(image_generation_prompt:str, llm:LollmsApplication):
                     f"{start_header_id_template}negative_prompt{end_header_id_template}",
                 ])    
 
-def build_video(    app,
+def build_video(    app:LollmsApplication,
                     prompt, 
                     negative_prompt, 
-                    model_name: str = "darkSushiMixMix_225D_64380.safetensors",
                     height: int = 512,
                     width: int = 512,
                     steps: int = 20,
@@ -41,22 +40,15 @@ def build_video(    app,
     try:
         personality = app.personality
         if app.ttv!=None:
-            personality.step_start("Generating video")
+            personality.step_start("Generating video (this can take a long while, be patient please ...)")
             infos = app.ttv.generate_video(
                             prompt,
                             negative_prompt,
-                            model_name,
-                            height,
-                            width,
-                            steps,
-                            seed,
-                            guidance_scale,
-                            loras,
-                            embeddings,
-                            closed_loop,
-                            clip_skip,
+                            height=height,
+                            width=width,
+                            
                         )
-            personality.step_end("Generating video")
+            personality.step_end("Generating video (this can take a long while, be patient please ...)")
             
             file = infos["videos"][0]["video_url"]
             escaped_url =  discussion_path_to_url(file)
@@ -100,6 +92,6 @@ class VideoGen (FunctionCall):
         width = kwargs.get("width",1024)
         height = kwargs.get("height",512)
         
-        return build_video(self.app, prompt, negative_prompt,width, height, self.personality, self.client)
+        return build_video(self.app, prompt, negative_prompt, width, height, self.personality, self.client)
     
         

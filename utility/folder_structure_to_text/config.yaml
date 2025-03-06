@@ -1,0 +1,18 @@
+author: ParisNeo
+category: utility
+class_name: FolderStructureToText
+creation_date_time: '2025-03-03T12:54:40.629959'
+description: Takes a folder path and generates a text file with the folder structure
+  and content of text-based files.
+last_update_date_time: '2025-03-03T12:54:40.629959'
+name: folder_structure_to_text
+parameters:
+- description: The path to the folder to analyze.
+  name: folder_path
+  type: str
+returns:
+  status:
+    description: The content of the generated text file.
+    type: str
+static_parameters: []
+version: 1.0.0
