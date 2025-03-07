@@ -56,6 +56,7 @@ from lollms.app import LollmsApplication
 from lollms.client_session import Client
 from lollms.prompting import LollmsContextDetails
 from ascii_colors import ASCIIColors, trace_exception
+from lollms.config import TypedConfig, ConfigTemplate, BaseConfig
 # Use pipmaster to check and install any missing module by its name
 import pipmaster as pm
 if not pm.is_installed("module name"):
@@ -64,7 +65,17 @@ if not pm.is_installed("module name"):
 
 class MyFunction(FunctionCall): #use the same name as class_name from the yaml file
     def __init__(self, app: LollmsApplication, client: Client):
-        super().__init__("my_function_name",app, FunctionType.CONTEXT_UPDATE, client) # replace the string with the function name with no spaces
+        # Optionally if some static settings are needed:
+        static_parameters=[
+            {
+                    "name": "the_parameter_name", # spaces are forbidden in the name, use _
+                    "type": "int", # supported types are: int, float, str
+                    "value": 7, # the value of the parameter
+                    "help": "A help text to explain the parameter"                
+            },
+            ...
+        ]
+        super().__init__("my_function_name", app, FunctionType.CONTEXT_UPDATE, client, static_parameters) # replace the string with the function name with no spaces, if no static_parameters are needed, just don't put the parameter here.
         \"\"\"
         Make sur to use app.lollms_paths.personal_outputs_path for any output files the function will output unless secified by the user
         Extract the static parameters from the dictionary here. these are parameters that can be set by the user in the settings of the function call in the ui.
