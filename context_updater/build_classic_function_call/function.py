@@ -71,7 +71,8 @@ if not pm.is_installed("module name"):
 class MyFunction(FunctionCall): #use the same name as class_name from the yaml file
     def __init__(self, app: LollmsApplication, client: Client):
         # Optionally if some static settings are needed:
-        static_parameters=[
+        static_parameters=TypedConfig(
+            ConfigTemplate([
             {
                     "name": "the_parameter_name", # spaces are forbidden in the name, use _
                     "type": "int", # supported types are: int, float, str
@@ -79,7 +80,10 @@ class MyFunction(FunctionCall): #use the same name as class_name from the yaml f
                     "help": "A help text to explain the parameter"                
             },
             ...
-        ]
+            ]),
+            BaseConfig(config={
+            })
+        )
         super().__init__("my_function_name", app, FunctionType.CONTEXT_UPDATE, client, static_parameters) # replace the string with the function name with no spaces, if no static_parameters are needed, just don't put the parameter here.
 
         \"\"\"
