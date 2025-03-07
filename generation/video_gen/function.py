@@ -51,6 +51,13 @@ def build_video(    app:LollmsApplication,
             personality.step_end("Generating video (this can take a long while, be patient please ...)")
             
             escaped_url =  discussion_path_to_url(file)
+            app.personality.set_message_html(f"""<div style="width: 100%; max-width: 800px; margin: 0 auto;">
+  <video controls style="width: 100%; height: auto;">
+    <source src="{escaped_url}" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+""")
 
             if return_format == "markdown":
                 return f'\n![]({escaped_url})'
