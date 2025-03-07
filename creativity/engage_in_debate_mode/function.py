@@ -21,10 +21,8 @@ class EngageInDebateMode(FunctionCall):
         personality (Personality): Access to personality methods for LLM interaction.
     """
 
-    def __init__(self, app: LollmsApplication, client: Client, static_parameters: dict = {}):
-        super().__init__(FunctionType.CONTEXT_UPDATE, client)
-        self.app = app
-        self.personality = app.personality
+    def __init__(self, app: LollmsApplication, client: Client):
+        super().__init__("engage_in_debate_mode", app, FunctionType.CONTEXT_UPDATE, client)
 
     def update_context(self, context: LollmsContextDetails, constructed_context: List[str]):
         """

@@ -7,11 +7,11 @@ from datetime import datetime
 import yaml
 from typing import List
 from ascii_colors import ASCIIColors, trace_exception
+from lollms.config import TypedConfig, ConfigTemplate, BaseConfig
 
 class BuildAFunction(FunctionCall):
-    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict={}):
-        super().__init__(FunctionType.CONTEXT_UPDATE, client)
-        self.app = app
+    def __init__(self, app: LollmsApplication, client: Client):
+        super().__init__("build_classic_function_call", app, FunctionType.CONTEXT_UPDATE, client)
         self.personality = app.personality
 
     def update_context(self, context: LollmsContextDetails, constructed_context: List[str]):

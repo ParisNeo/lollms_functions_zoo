@@ -9,17 +9,34 @@ import json
 import os
 import pipmaster as pm
 from typing import List
-
+from lollms.config import TypedConfig, ConfigTemplate, BaseConfig
 # Install required packages
 if not pm.is_installed("pywin32"):
     pm.install("pywin32")
 
 class OutlookAgendaContext(FunctionCall):
-    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict={}):
-        super().__init__(FunctionType.CONTEXT_UPDATE, client)
-        self.app = app
-        self.sync_days_ahead = static_parameters.get('sync_days_ahead', 7)
-        self.cache_duration = static_parameters.get('cache_duration', 15)
+    def __init__(self, app: LollmsApplication, client: Client):
+        static_parameters = TypedConfig(
+            ConfigTemplate([
+                {
+                    "name": "sync_days_ahead",
+                    "type": "int",
+                    "value": 7,
+                    "help": "Sync days ahead."
+                },
+                {
+                    "name": "cache_duration",
+                    "type": "int",
+                    "value": 15,
+                    "help": "The number of times to retry the request if it fails or times out."
+                },
+            ]),
+            BaseConfig(config={
+            })
+        )
+        super().__init__("outlook_agenda_context", app, FunctionType.CONTEXT_UPDATE, client, static_parameters)
+        self.sync_days_ahead = static_parameters.sync_days_ahead
+        self.cache_duration = static_parameters.cache_duration
         self.cache_file = os.path.join(app.lollms_paths.personal_outputs_path, 'outlook_cache.json')
         self.last_sync = None
 

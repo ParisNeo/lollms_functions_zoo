@@ -9,9 +9,8 @@ from typing import List
 from ascii_colors import ASCIIColors, trace_exception
 
 class BuildAFunction(FunctionCall):
-    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict={}):
-        super().__init__(FunctionType.CONTEXT_UPDATE, client)
-        self.app = app
+    def __init__(self, app: LollmsApplication, client: Client):
+        super().__init__("build_context_update_function", app, FunctionType.CONTEXT_UPDATE, client)
         self.personality = app.personality
 
     def update_context(self, context: LollmsContextDetails, constructed_context: List[str]):
@@ -64,9 +63,8 @@ if not pm.is_installed("module name"):
 
 
 class MyFunction(FunctionCall): #use the same name as class_name from the yaml file
-    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict={}):
-        super().__init__(FunctionType.CONTEXT_UPDATE, client)
-        self.app = app
+    def __init__(self, app: LollmsApplication, client: Client):
+        super().__init__("my_function_name",app, FunctionType.CONTEXT_UPDATE, client) # replace the string with the function name with no spaces
         \"\"\"
         Make sur to use app.lollms_paths.personal_outputs_path for any output files the function will output unless secified by the user
         Extract the static parameters from the dictionary here. these are parameters that can be set by the user in the settings of the function call in the ui.

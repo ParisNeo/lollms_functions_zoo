@@ -67,11 +67,8 @@ def build_image(prompt, negative_prompt, width, height, personality:AIPersonalit
 
 
 class ImageGen (FunctionCall):
-    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict={}):
-        super().__init__(FunctionType.CLASSIC, client)
-        self.app = app
-        self.personality = app.personality
-        self.model = app.model
+    def __init__(self, app: LollmsApplication, client: Client):
+        super().__init__("image_gen", app, FunctionType.CLASSIC, client)
 
     def execute(self, context, *args, **kwargs):
         prompt = kwargs.get("prompt","")

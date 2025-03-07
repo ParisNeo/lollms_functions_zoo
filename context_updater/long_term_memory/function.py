@@ -9,10 +9,8 @@ from datetime import datetime
 from typing import List
 
 class LongTermMemoryFunction(FunctionCall):
-    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict={}):
-        super().__init__(FunctionType.CONTEXT_UPDATE, client)
-        self.app = app
-        self.personality = app.personality
+    def __init__(self, app: LollmsApplication, client: Client):
+        super().__init__("long_term_memory", app, FunctionType.CONTEXT_UPDATE, client)
         self.model = app.model
         
         # Set up memory file path

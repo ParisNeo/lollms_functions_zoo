@@ -9,6 +9,7 @@ from lollms.utilities import outputs_path_to_url
 from lollms.client_session import Client
 from lollms.personality import APScript
 from ascii_colors import trace_exception
+from lollms.config import TypedConfig, ConfigTemplate, BaseConfig
 
 
 def build_negative_prompt(image_generation_prompt:str, llm:LollmsApplication):
@@ -27,8 +28,8 @@ def build_negative_prompt(image_generation_prompt:str, llm:LollmsApplication):
 def build_video(    app:LollmsApplication,
                     prompt, 
                     negative_prompt, 
-                    height: int = 512,
                     width: int = 512,
+                    height: int = 512,
                     steps: int = 20,
                     seed: int = -1,
                     guidance_scale: Optional[float] = None,
@@ -64,11 +65,8 @@ def build_video(    app:LollmsApplication,
 
 
 class VideoGen (FunctionCall):
-    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict={}):
-        super().__init__(FunctionType.CLASSIC, client)
-        self.app = app
-        self.personality = app.personality
-        self.model = app.model
+    def __init__(self, app: LollmsApplication, client: Client):
+        super().__init__("video_gen", app, FunctionType.CLASSIC, client)
 
     def execute(self, context, *args, **kwargs):
         prompt = kwargs.get("prompt","")
