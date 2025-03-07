@@ -59,7 +59,10 @@ def build_video(    app:LollmsApplication,
   </video>
 </div>
 """)
-        return f"Generated video saved to : {file}"
+            return f"Generated video saved to : {file}"
+        else:
+            return f"Text to video module not loaded"
+
     except Exception as ex:
         trace_exception(ex)
 
