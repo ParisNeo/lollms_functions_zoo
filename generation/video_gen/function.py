@@ -5,7 +5,7 @@ from lollms.function_call import FunctionCall, FunctionType
 from lollms.prompting import LollmsContextDetails
 from datetime import datetime
 from typing import List, Optional, Dict, Any
-from lollms.utilities import discussion_path_to_url
+from lollms.utilities import outputs_path_to_url
 from lollms.client_session import Client
 from lollms.personality import APScript
 from ascii_colors import trace_exception
@@ -49,15 +49,16 @@ def build_video(    app:LollmsApplication,
                             
                         )
             personality.step_end("Generating video (this can take a long while, be patient please ...)")
+            url = outputs_path_to_url(file)
             
             app.personality.set_message_html(f"""<div style="width: 100%; max-width: 800px; margin: 0 auto;">
   <video controls style="width: 100%; height: auto;">
-    <source src="{file}" type="video/mp4">
+    <source src="{url}" type="video/mp4">
     Your browser does not support the video tag.
   </video>
 </div>
 """)
-        return file
+        return f"Generated video saved to : {file}"
     except Exception as ex:
         trace_exception(ex)
 
