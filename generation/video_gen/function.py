@@ -45,8 +45,8 @@ def build_video(    app:LollmsApplication,
             file = app.ttv.generate_video(
                             prompt,
                             negative_prompt,
-                            height=height,
                             width=width,
+                            height=height,
                             
                         )
             personality.step_end("Generating video (this can take a long while, be patient please ...)")
