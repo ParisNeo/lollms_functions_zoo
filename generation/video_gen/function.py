@@ -41,7 +41,7 @@ def build_video(    app:LollmsApplication,
         personality = app.personality
         if app.ttv!=None:
             personality.step_start("Generating video (this can take a long while, be patient please ...)")
-            infos = app.ttv.generate_video(
+            file = app.ttv.generate_video(
                             prompt,
                             negative_prompt,
                             height=height,
@@ -50,7 +50,6 @@ def build_video(    app:LollmsApplication,
                         )
             personality.step_end("Generating video (this can take a long while, be patient please ...)")
             
-            file = infos["videos"][0]["video_url"]
             escaped_url =  discussion_path_to_url(file)
 
             if return_format == "markdown":
