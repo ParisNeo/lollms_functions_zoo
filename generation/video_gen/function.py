@@ -36,7 +36,7 @@ def build_video(    app:LollmsApplication,
                     embeddings: Optional[List[Dict[str, Any]]] = None,
                     closed_loop: Optional[bool] = None,
                     clip_skip: Optional[int] = None,                    
-                    personality:AIPersonality=None, client:Client=None, return_format="markdown"):
+                    personality:AIPersonality=None, client:Client=None):
     try:
         personality = app.personality
         if app.ttv!=None:
@@ -50,39 +50,16 @@ def build_video(    app:LollmsApplication,
                         )
             personality.step_end("Generating video (this can take a long while, be patient please ...)")
             
-            escaped_url =  discussion_path_to_url(file)
             app.personality.set_message_html(f"""<div style="width: 100%; max-width: 800px; margin: 0 auto;">
   <video controls style="width: 100%; height: auto;">
-    <source src="{escaped_url}" type="video/mp4">
+    <source src="{file}" type="video/mp4">
     Your browser does not support the video tag.
   </video>
 </div>
 """)
-
-            if return_format == "markdown":
-                return f'\n![]({escaped_url})'
-            elif return_format == "url":
-                return escaped_url
-            elif return_format == "path":
-                return file
-            elif return_format == "url_and_path":
-                return {"url": escaped_url, "path": file}
-            else:
-                return f"Invalid return_format: {return_format}. Supported formats are 'markdown', 'url', 'path', and 'url_and_path'."
-        else:
-            return "No text to video service is configured. Please configure a service in the settings."
+        return file
     except Exception as ex:
         trace_exception(ex)
-        if return_format == "markdown":
-            return f"\nCouldn't generate image. Make sure {personality.config.active_tti_service} service is installed"
-        elif return_format == "url":
-            return None
-        elif return_format == "path":
-            return None
-        elif return_format == "url_and_path":
-            return {"url": None, "path": None, "error":ex}
-        else:
-            return f"Couldn't generate image. Make sure {personality.config.active_tti_service} service is installed"
 
 
 class VideoGen (FunctionCall):
