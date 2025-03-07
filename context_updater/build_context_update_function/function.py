@@ -33,11 +33,6 @@ category: custom # must be custom as this is a custom function
 class_name: MyFunction
 name: my_function
 description: A custom function.
-static_parameters: #static parameters are parameters set by the user not by the LLM and in general they don't change that much
-- name: the static parameter name
-  type: the type
-  description: the description
-  ...
 parameters: # Parameters are parameters that do change depending on the request
 - name: param1
   description: The first parameter.
