@@ -14,6 +14,7 @@ import subprocess
 import sys
 import threading
 import queue
+from lollms.config import TypedConfig, ConfigTemplate, BaseConfig
 
 class PersistentShell:
     def __init__(self):
@@ -74,11 +75,14 @@ class ExecuteBashCommand(FunctionCall):
     This function wraps around subprocess to execute shell commands safely.
     """
 
-    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict={}):
-        super().__init__(FunctionType.CLASSIC, client)
-        self.app = app
-        self.personality = app.personality
-        self.timeout = static_parameters.get('timeout', 60)
+    def __init__(self, app: LollmsApplication, client: Client):
+        static_parameters = TypedConfig(
+            ConfigTemplate([
+            ]),
+            BaseConfig(config={
+            })
+        )        
+        super().__init__("execute_bash_command", app,FunctionType.CLASSIC, client, static_parameters)
     
     def update_context(self, context, constructed_context:List[str]):
         """

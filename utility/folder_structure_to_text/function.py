@@ -9,9 +9,8 @@ class FolderStructureToText(FunctionCall):
     EXCLUDED_FOLDERS = {".git", "__pycache__", "node_modules", "target", "dist", "build", "venv"}
     EXCLUDED_EXTENSIONS = {".pyc", ".pyo", ".o", ".obj", ".class"}
 
-    def __init__(self, app: LollmsApplication, client: Client, static_parameters: dict = {}):
-        super().__init__(FunctionType.CLASSIC, client)
-        self.app = app
+    def __init__(self, app: LollmsApplication, client: Client):
+        super().__init__("folder_structure_to_text", app,FunctionType.CLASSIC, client)
 
     def update_context(self, context: LollmsContextDetails, constructed_context: List[str]):
         return constructed_context

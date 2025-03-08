@@ -11,10 +11,8 @@ if not pm.is_installed("youtube_transcript_api"):
 from youtube_transcript_api import YouTubeTranscriptApi
 
 class DownloadYoutubeTranscript(FunctionCall):
-    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict={}):
-        super().__init__(FunctionType.CLASSIC, client)
-        self.app = app
-        self.personality = app.personality
+    def __init__(self, app: LollmsApplication, client: Client):
+        super().__init__("download_youtube_transcript",app,FunctionType.CLASSIC, client)
 
     def execute(self, *args, **kwargs):
         try:

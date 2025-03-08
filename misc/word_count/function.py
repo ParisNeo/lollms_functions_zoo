@@ -3,11 +3,8 @@ from lollms.app import LollmsApplication
 from lollms.client_session import Client
 
 class WordCountFunction(FunctionCall):
-    def __init__(self, app: LollmsApplication, client: Client, static_parameters:dict={}):
-        super().__init__(FunctionType.CLASSIC, client)
-        self.app = app
-        self.personality = app.personality
-        self.model = app.model
+    def __init__(self, app: LollmsApplication, client: Client):
+        super().__init__("word_count", FunctionType.CLASSIC, client)
 
     def execute(self, *args, **kwargs):
         # Extract the text input

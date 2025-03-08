@@ -3,6 +3,7 @@ from lollms.app import LollmsApplication
 from lollms.client_session import Client
 from lollms.prompting import LollmsContextDetails
 from ascii_colors import ASCIIColors, trace_exception
+from lollms.config import TypedConfig, ConfigTemplate, BaseConfig
 from typing import List
 import json
 
@@ -14,11 +15,20 @@ if not pm.is_installed("youtube_transcript_api"):
 from youtube_transcript_api import YouTubeTranscriptApi
 
 class YoutubeTranscriptSummarizer(FunctionCall):
-    def __init__(self, app: LollmsApplication, client: Client, static_parameters: dict={}):
-        super().__init__(FunctionType.CONTEXT_UPDATE, client)
-        self.app = app
-        self.personality = app.personality
-        self.language_code = static_parameters.get('language_code', 'en')
+    def __init__(self, app: LollmsApplication, client: Client):
+        static_parameters = TypedConfig(
+            ConfigTemplate([
+                {
+                    "name": "language_code",
+                    "type": "str",
+                    "value": "en",
+                    "help": "ISO language code"
+                },
+            ]),
+            BaseConfig(config={
+            })
+        )
+        super().__init__("youtube_transcript_summarizer", app, FunctionType.CONTEXT_UPDATE, client, static_parameters)
 
     def extract_video_id(self, prompt: str) -> str:
         # Use AI to extract video ID
@@ -70,7 +80,7 @@ class YoutubeTranscriptSummarizer(FunctionCall):
 
             # Get the transcript
             try:
-                transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[self.language_code])
+                transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[self.static_parameters.language_code])
 
                 # Convert transcript to text
                 full_text = " ".join([entry['text'] for entry in transcript])

@@ -10,7 +10,6 @@ parameters:
 - description: The YouTube video ID to process
   name: video_id
   type: str
-static_parameters:
 - default: en
   description: The language code for the transcript (e.g., 'en', 'fr', etc.)
   name: language_code
