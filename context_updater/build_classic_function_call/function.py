@@ -78,7 +78,7 @@ class MyFunction(FunctionCall): #use the same name as class_name from the yaml f
             BaseConfig(config={
             })
         )
-        super().__init__("my_function_name", app, FunctionType.CONTEXT_UPDATE, client, static_parameters) # replace the string with the function name with no spaces, if no static_parameters are needed, just don't put the parameter here.
+        super().__init__("my_function_name", app, FunctionType.CLASSIC, client, static_parameters) # replace the string with the function name with no spaces, if no static_parameters are needed, just don't put the parameter here.
         # You can use this.static_parameters.the_parameter_name to recover parameters from the static parameters
         \"\"\"
         Make sur to use app.lollms_paths.personal_outputs_path for any output files the function will output unless secified by the user
