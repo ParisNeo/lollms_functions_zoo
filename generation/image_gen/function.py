@@ -24,20 +24,23 @@ def build_image(prompt, negative_prompt, width, height, personality:AIPersonalit
                             output_path=client.discussion.discussion_folder
                         )
             personality.step_end("Painting")
-            
-        file = str(file)
-        escaped_url =  discussion_path_to_url(file)
+        if file:
+            file = str(file)
+            escaped_url =  discussion_path_to_url(file)
 
-        if return_format == "markdown":
-            return f'\n![]({escaped_url})'
-        elif return_format == "url":
-            return escaped_url
-        elif return_format == "path":
-            return file
-        elif return_format == "url_and_path":
-            return {"url": escaped_url, "path": file}
+            if return_format == "markdown":
+                return f'\n![]({escaped_url})'
+            elif return_format == "url":
+                return escaped_url
+            elif return_format == "path":
+                return file
+            elif return_format == "url_and_path":
+                return {"url": escaped_url, "path": file}
+            else:
+                return f"Invalid return_format: {return_format}. Supported formats are 'markdown', 'url', 'path', and 'url_and_path'."
         else:
-            return f"Invalid return_format: {return_format}. Supported formats are 'markdown', 'url', 'path', and 'url_and_path'."
+            return f"Could not generate the image."
+
     except Exception as ex:
         trace_exception(ex)
         if return_format == "markdown":
