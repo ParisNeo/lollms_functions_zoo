@@ -12,20 +12,6 @@ from ascii_colors import trace_exception
 from functools import partial
 from lollms.functions.prompting.image_gen_prompts import get_image_gen_prompt, get_random_image_gen_prompt
 
-
-def build_negative_prompt(image_generation_prompt:str, llm:LollmsApplication):
-    start_header_id_template    = llm.config.start_header_id_template
-    end_header_id_template      = llm.config.end_header_id_template
-    system_message_template     = llm.config.system_message_template        
-
-    return "\n".join([
-                    f"{start_header_id_template}{system_message_template}{end_header_id_template}",
-                    f"{llm.config.negative_prompt_generation_prompt}",
-                    f"{start_header_id_template}image_generation_prompt{end_header_id_template}",
-                    f"{image_generation_prompt}",
-                    f"{start_header_id_template}negative_prompt{end_header_id_template}",
-                ])    
-
 def build_image(prompt, negative_prompt, width, height, personality:AIPersonality, client:Client, return_format="markdown"):
     try:
         if personality.app.tti!=None:
