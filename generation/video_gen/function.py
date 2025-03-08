@@ -49,6 +49,10 @@ def build_video(    app:LollmsApplication,
                             height=height,
                             
                         )
+            if file is None:
+                personality.step_end("Generating video (this can take a long while, be patient please ...)", False)
+                return "Failed to generate the video. Make sure you have enough balance"
+
             personality.step_end("Generating video (this can take a long while, be patient please ...)")
             url = outputs_path_to_url(file)
             
