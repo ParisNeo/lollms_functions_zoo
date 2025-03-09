@@ -52,6 +52,7 @@ from lollms.client_session import Client
 from lollms.prompting import LollmsContextDetails
 from ascii_colors import ASCIIColors, trace_exception
 from lollms.config import TypedConfig, ConfigTemplate, BaseConfig
+from typing import List, Dict
 # Use pipmaster to check and install any missing module by its name
 import pipmaster as pm
 if not pm.is_installed("module name"):
@@ -59,8 +60,8 @@ if not pm.is_installed("module name"):
 
 
 class MyFunction(FunctionCall): #use the same name as class_name from the yaml file
-    def __init__(self, app: LollmsApplication, client: Client):
-        # Optionally if some static settings are needed:
+    def __init__(self, app: LollmsApplication, client: Client): # This constructor must have this exact signature
+        # Optionally if some static settings are needed. You need to build it exactly like this:
         static_parameters=TypedConfig(
             ConfigTemplate([
             {
@@ -76,6 +77,7 @@ class MyFunction(FunctionCall): #use the same name as class_name from the yaml f
         )
         super().__init__("my_function_name", app, FunctionType.CONTEXT_UPDATE, client, static_parameters) # replace the string with the function name with no spaces, if no static_parameters are needed, just don't put the parameter here.
         # You can use this.static_parameters.the_parameter_name to recover parameters from the static parameters
+        # for example, if I have a parameter named value, I can access it using this.static_parameters.value
         \"\"\"
         Make sur to use app.lollms_paths.personal_outputs_path for any output files the function will output unless secified by the user
         Extract the static parameters from the dictionary here. these are parameters that can be set by the user in the settings of the function call in the ui.

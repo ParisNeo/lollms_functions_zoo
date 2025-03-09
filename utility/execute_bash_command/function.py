@@ -8,7 +8,7 @@ from pathlib import Path
 from ascii_colors import trace_exception
 import subprocess
 import sys
-from typing import List
+from typing import List, Dict
 
 import subprocess
 import sys

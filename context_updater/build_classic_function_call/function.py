@@ -52,7 +52,7 @@ from lollms.client_session import Client
 from lollms.prompting import LollmsContextDetails
 from datetime import datetime
 import yaml
-from typing import List
+from typing import List, Dict
 from ascii_colors import ASCIIColors, trace_exception
 from lollms.config import TypedConfig, ConfigTemplate, BaseConfig
 
