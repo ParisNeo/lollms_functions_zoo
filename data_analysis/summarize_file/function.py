@@ -7,7 +7,14 @@ import yaml
 from typing import List, Dict, Optional
 from ascii_colors import ASCIIColors, trace_exception
 from lollms.config import TypedConfig, ConfigTemplate, BaseConfig
+from pathlib import Path
 import os
+
+import pipmaster as pm
+if not pm.is_installed("docling"):
+    pm.install("docling")
+    
+from docling.document_converter import DocumentConverter
 
 class SummarizeFile(FunctionCall):
     def __init__(self, app: LollmsApplication, client: Client):
@@ -55,7 +62,7 @@ class SummarizeFile(FunctionCall):
                     "type": "int",
                     "value": 4096,
                     "min": 512,
-                    "max": 16384,
+                    "max": 10000000,
                     "help": """Size of each text chunk to process."""
                 },
                 {
@@ -80,15 +87,34 @@ class SummarizeFile(FunctionCall):
         super().__init__("summarize_file", app, FunctionType.CLASSIC, client, static_parameters)
         self.personality = app.personality
 
-    def execute(self, context: LollmsContextDetails, file_path: str) -> str:
+    def load_file(self, file_path: Path):
+        if file_path.suffix in [".pdf", ".docx", ".pptx", ".html"]:        
+            converter = DocumentConverter()
+            result = converter.convert(str(file_path))
+            file_content = result.document.export_to_markdown()
+        elif file_path.suffix in [
+            ".txt", ".md", ".markdown", ".c", ".cpp", ".h", ".hpp", ".py", ".python", ".java", ".js", ".jsx", ".ts", ".tsx",
+            ".json", ".xml", ".yaml", ".yml", ".csv", ".ini", ".cfg", ".log", ".sh", ".bat", ".ps1", ".rb", ".go", ".rs",
+            ".swift", ".kt", ".kts", ".php", ".css", ".scss", ".sass", ".less", ".html", ".htm", ".sql", ".lua", ".dart",
+            ".r", ".m", ".vb", ".vbs", ".asm", ".s", ".erl", ".ex", ".exs", ".coffee", ".pl", ".perl", ".groovy", ".gradle",
+            ".dockerfile", ".makefile", ".cmake", ".toml", ".tex"
+        ]:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                file_content = file.read()
+        else:
+            return "Unsupported file type"
+        return file_content   
+              
+    def summarize_document(self, file_path:Path):
+        self.personality.step_start(f"Summarizing {file_path}")
         # Validate file existence
-        if not os.path.exists(file_path):
+        file_path = Path(file_path)
+        if not file_path.exists():
             return f"Error: File '{file_path}' not found."
 
         # Read the file content
         try:
-            with open(file_path, 'r', encoding='utf-8') as file:
-                file_content = file.read()
+            file_content = self.load_file(file_path)
             if not file_content.strip():
                 return "Error: File is empty."
         except Exception as e:
@@ -160,7 +186,27 @@ class SummarizeFile(FunctionCall):
                 callback=self.personality.sink,
                 debug=False
             )
+            self.personality.step_end(f"Summarizing {file_path}")
             return summary if summary else "No summary generated."
         except Exception as e:
             trace_exception(e)  # Log the exception for debugging
+            self.personality.step_end(f"Summarizing {file_path}", False)
             return f"Error during summarization: {str(e)}"
+        
+    def execute(self, context: LollmsContextDetails, **kwargs) -> str:
+        file_path = kwargs.get("file_path", None)
+        
+        if file_path is None:
+            full_summaries = ""
+            for file_path in self.client.discussion.text_files:
+                summary = self.summarize_document(file_path)
+                full_summaries += f"""
+-----
+Document Summary : {file_path}
+-----
+{summary}
+"""     
+            return full_summaries
+        else:
+            return self.summarize_document(file_path)
+        
