@@ -30,30 +30,26 @@ def build_video(    app:LollmsApplication,
                     negative_prompt, 
                     width: int = 512,
                     height: int = 512,
-                    steps: int = 20,
-                    seed: int = -1,
-                    guidance_scale: Optional[float] = None,
-                    loras: Optional[List[Dict[str, Any]]] = None,
-                    embeddings: Optional[List[Dict[str, Any]]] = None,
-                    closed_loop: Optional[bool] = None,
-                    clip_skip: Optional[int] = None,                    
-                    personality:AIPersonality=None, client:Client=None):
+                    personality:AIPersonality=None, 
+                    client:Client=None,
+                    output_file_name=None):
     try:
         personality = app.personality
         if app.ttv!=None:
-            personality.step_start("Generating video (this can take a long while, be patient please ...)")
+            personality.step_start("Generating video (this can take a while, be patient please ...)")
             file = app.ttv.generate_video(
                             prompt,
                             negative_prompt,
                             width=width,
                             height=height,
-                            
+                            output_folder=client.discussion.discussion_folder,
+                            output_file_name=output_file_name                          
                         )
             if file is None:
-                personality.step_end("Generating video (this can take a long while, be patient please ...)", False)
+                personality.step_end("Generating video (this can take a while, be patient please ...)", False)
                 return "Failed to generate the video. Make sure you have enough balance"
 
-            personality.step_end("Generating video (this can take a long while, be patient please ...)")
+            personality.step_end("Generating video (this can take a while, be patient please ...)")
             url = outputs_path_to_url(file)
             
             app.personality.set_message_html(f"""<div style="width: 100%; max-width: 800px; margin: 0 auto;">
@@ -80,7 +76,8 @@ class VideoGen (FunctionCall):
         negative_prompt = kwargs.get("negative_prompt","")
         width = kwargs.get("width",1024)
         height = kwargs.get("height",512)
+        output_file_name = kwargs.get("output_file_name",None)
         
-        return build_video(self.app, prompt, negative_prompt, width, height, self.personality, self.client)
+        return build_video(self.app, prompt, negative_prompt, width, height, self.personality, self.client, output_file_name=output_file_name)
     
         

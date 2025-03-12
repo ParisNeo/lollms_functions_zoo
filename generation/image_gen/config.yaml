@@ -25,6 +25,13 @@ parameters:
 - description: the height of the image to generate (default 512)
   name: height
   type: int
+- description: the height of the image to generate (default 512)
+  name: height
+  type: int
+- description: the filename with .png extention if requested
+  name: output_file_name
+  type: str
+
 returns:
   status:
     description: The status of the generation
