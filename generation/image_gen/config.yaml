@@ -31,7 +31,6 @@ parameters:
 - description: the filename with .png extention if requested
   name: output_file_name
   type: str
-
 returns:
   status:
     description: The status of the generation
