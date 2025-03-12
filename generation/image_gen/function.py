@@ -21,7 +21,7 @@ def build_image(prompt, negative_prompt, width, height, personality:AIPersonalit
                             negative_prompt,
                             width = width,
                             height = height,
-                            output_path=client.discussion.discussion_folder
+                            output_folder=client.discussion.discussion_folder
                         )
             personality.step_end("Painting")
         if file:
