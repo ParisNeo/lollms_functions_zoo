@@ -12,7 +12,7 @@ from ascii_colors import trace_exception
 from functools import partial
 from lollms.functions.prompting.image_gen_prompts import get_image_gen_prompt, get_random_image_gen_prompt
 
-def build_image(prompt, negative_prompt, width, height, personality:AIPersonality, client:Client, return_format="markdown"):
+def build_image(prompt, negative_prompt, width, height, output_file_name, personality:AIPersonality, client:Client, return_format="markdown"):
     try:
         if personality.app.tti!=None:
             personality.step_start("Painting")
@@ -21,7 +21,8 @@ def build_image(prompt, negative_prompt, width, height, personality:AIPersonalit
                             negative_prompt,
                             width = width,
                             height = height,
-                            output_folder=client.discussion.discussion_folder
+                            output_folder=client.discussion.discussion_folder,
+                            output_file_name= output_file_name
                         )
             personality.step_end("Painting")
         if file:
@@ -62,9 +63,10 @@ class ImageGen (FunctionCall):
     def execute(self, context, *args, **kwargs):
         prompt = kwargs.get("prompt","")
         negative_prompt = kwargs.get("negative_prompt","")
+        output_file_name = kwargs.get("output_file_name",None)
         width = kwargs.get("width",1024)
         height = kwargs.get("height",512)
         
-        return build_image(prompt, negative_prompt,width, height, self.personality, self.client)
+        return build_image(prompt, negative_prompt,width, height, output_file_name, self.personality, self.client)
     
         
