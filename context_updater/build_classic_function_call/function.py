@@ -160,8 +160,9 @@ class MyFunction(FunctionCall): #use the same name as class_name from the yaml f
         # You can recover the parameters stated in the yaml from kwargs
         # use kwargs.get("the parameter name",default value) to recover the parameters
         # here do the requested functionality of the function call and return a string
-        #if the performed action needs to be reviewed by an llm before outputting a resule, 
+        # if the performed action needs to be reviewed by an llm before outputting a resule, 
         # use self.personality.fastgen or self.personality.generate_code to generate the output then return that output
+        # the current discussion assets should be stored in client.discussion.discussion_folder
         return "Your output as a string"
 ```
 """
@@ -192,7 +193,8 @@ class MyFunction(FunctionCall): #use the same name as class_name from the yaml f
                 with open(folder / f"config.yaml", "w", encoding="utf-8") as f:
                     f.write(yaml_code)
 
-                return f"Function '{yaml_data['name']}' created successfully in '{folder}'!"
+                self.personality.set_message_html(self.personality.build_message_element(f"Function '{yaml_data['name']}' created successfully in '{folder}'!"), client_id=self.client.client_id)
+                return llm_output
             else:
                 return "Error: The AI was not smart enough to generate the required code blocks. Please try again."
         except Exception as e:
