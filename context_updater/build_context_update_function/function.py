@@ -15,7 +15,7 @@ class BuildAFunction(FunctionCall):
 
     def update_context(self, context: LollmsContextDetails, constructed_context: List[str]):
         """Add instructions for building a function call to the context"""
-        instructions = """
+        instructions_part_one = """
 ### How to Build a Function Call
 
 To create a new function call, provide the following details:
@@ -44,7 +44,17 @@ returns:
     type: str (only supports str)
 version: 1.0.0
 ```
+""" + self.personality.user_custom_header("task") + "generate the yaml file to fulfill the user request."
 
+        yaml_code =  self.personality.generate_code("\n".join(constructed_context + [context.discussion_messages+instructions_part_one]))
+        yaml_data = yaml.safe_load(yaml_code)
+        self.personality.add_chunk_to_message_content("\n")
+        folder:Path = self.app.lollms_paths.custom_function_calls_path / yaml_data["name"]
+        folder.mkdir(exist_ok=True, parents=True)
+        with open(folder / f"config.yaml", "w", encoding="utf-8") as f:
+            f.write(yaml_code)
+            
+        instructions_part_two = """
 ```python
 from lollms.function_call import FunctionCall, FunctionType
 from lollms.app import LollmsApplication
@@ -156,37 +166,21 @@ class MyFunction(FunctionCall): #use the same name as class_name from the yaml f
 ```
 
 Make sure the python code structure respects and implements the right methods.
-"""
-        constructed_context.append(instructions)
-        return constructed_context
+Here is the yaml file:
+```yaml
+"""+yaml_code+"""
+```
+""" + self.personality.user_custom_header("task") + "generate the python file"
+
+        python_code =  self.personality.generate_code("\n".join(constructed_context + [context.discussion_messages, instructions_part_two]))
+        folder:Path = self.app.lollms_paths.custom_function_calls_path / yaml_data["name"]
+        folder.mkdir(exist_ok=True, parents=True)
+        with open(folder / f"function.py", "w", encoding="utf-8") as f:
+            f.write(python_code)
+        constructed_context.append(f"Building in background ... OK") 
+        constructed_context.append(f"Function '{yaml_data['name']}' created successfully in '{folder}'!") 
+        return constructed_context 
 
     def process_output(self, context: LollmsContextDetails, llm_output: str):
         """Generate Python and YAML files based on the AI's output"""
-        try:
-            # Extract code blocks from the AI's output
-            codes = self.personality.extract_code_blocks(llm_output)
-            if len(codes) >= 2:  # Expecting one Python and one YAML block
-                python_code = None
-                yaml_code = None
-
-                for code in codes[:2]:
-                    if code["type"] == "python":
-                        python_code = code["content"]
-                    elif code["type"] == "yaml":
-                        yaml_code = code["content"]
-                        yaml_data = yaml.safe_load(yaml_code)
-
-                folder:Path = self.app.lollms_paths.custom_function_calls_path / yaml_data["name"]
-                folder.mkdir(exist_ok=True, parents=True)
-                with open(folder / f"function.py", "w", encoding="utf-8") as f:
-                    f.write(python_code)
-
-                with open(folder / f"config.yaml", "w", encoding="utf-8") as f:
-                    f.write(yaml_code)
-
-                return f"Function '{yaml_data['name']}' created successfully in '{folder}'!"
-            else:
-                return "Error: The AI was not smart enough to generate the required code blocks. Please try again."
-        except Exception as e:
-            trace_exception(e)
-            return f"Error: {e}"
+        return llm_output
