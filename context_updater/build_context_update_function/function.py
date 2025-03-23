@@ -66,14 +66,13 @@ class MyFunction(FunctionCall): #use the same name as class_name from the yaml f
             ConfigTemplate([
             {
                     "name": "the_parameter_name", # spaces are forbidden in the name, use _
-                    "type": "int", # supported types are: int, float, str
+                    "type": "int", # supported types are: int, float, str, bool
                     "value": 7, # the value of the parameter
+                    "options": ["option1","option2" ...], # only for str type if there are fixed possibilities 
                     "help": "A help text to explain the parameter"                
             },
             ...
-            ]),
-            BaseConfig(config={
-            })
+            ])
         )
         super().__init__("my_function_name", app, FunctionType.CONTEXT_UPDATE, client, static_parameters) # replace the string with the function name with no spaces, if no static_parameters are needed, just don't put the parameter here.
         # You can use this.static_parameters.the_parameter_name to recover parameters from the static parameters
