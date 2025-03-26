@@ -46,7 +46,7 @@ version: 1.0.0
 ```
 """ + self.personality.user_custom_header("task") + "generate the yaml file to fulfill the user request."
 
-        yaml_code =  self.personality.generate_code("\n".join(constructed_context + [context.discussion_messages+instructions_part_one]))
+        yaml_code =  self.personality.generate_code("\n".join(constructed_context + [context.discussion_messages+instructions_part_one]),language="yaml")
         yaml_data = yaml.safe_load(yaml_code)
         self.personality.add_chunk_to_message_content("\n")
         folder:Path = self.app.lollms_paths.custom_function_calls_path / yaml_data["name"]
@@ -76,14 +76,23 @@ class MyFunction(FunctionCall): #use the same name as class_name from the yaml f
             ConfigTemplate([
             {
                     "name": "the_parameter_name", # spaces are forbidden in the name, use _
-                    "type": "int", # supported types are: int, float, str, bool
+                    "type": "str", # supported types are: int, float, str, bool (dict and list are not supported)
+                    "value": "value string", # the value of the parameter
+                    "options": ["value string","another value string" ...], # only for str type if there are fixed possibilities 
+                    "help": "A help text to explain the parameter"                
+            },
+            {
+                    "name": "the_parameter_name", # spaces are forbidden in the name, use _
+                    "type": "int", # supported types are: int, float, str, bool (dict and list are not supported²)
                     "value": 7, # the value of the parameter
-                    "options": ["option1","option2" ...], # only for str type if there are fixed possibilities 
                     "help": "A help text to explain the parameter"                
             },
             ...
             ])
         )
+        # Initialize a CONTEXT_UPDATE function call that puts knowledge into the LLM context before the LLM is called.
+        # It can also post process the LLM output.
+
         super().__init__("my_function_name", app, FunctionType.CONTEXT_UPDATE, client, static_parameters) # replace the string with the function name with no spaces, if no static_parameters are needed, just don't put the parameter here.
         # You can use this.static_parameters.the_parameter_name to recover parameters from the static parameters
         # for example, if I have a parameter named value, I can access it using this.static_parameters.value
@@ -127,6 +136,7 @@ class MyFunction(FunctionCall): #use the same name as class_name from the yaml f
         \"\"\"
            
     def update_context(self, context: LollmsContextDetails, constructed_context: List[str]):
+        # This method is mandatory for this kind of function calls
         # Here you can add more instructions to the AI so that it can perform the task provided by the user correctly
         # You need to update the constructed_context list by adding extra information
         # You have access to all these informations from the context parameter:
@@ -172,13 +182,15 @@ Here is the yaml file:
 ```
 """ + self.personality.user_custom_header("task") + "generate the python file"
 
-        python_code =  self.personality.generate_code("\n".join(constructed_context + [context.discussion_messages, instructions_part_two]))
+        python_code =  self.personality.generate_code("\n".join(constructed_context + [context.discussion_messages, instructions_part_two]),language="python")
         folder:Path = self.app.lollms_paths.custom_function_calls_path / yaml_data["name"]
         folder.mkdir(exist_ok=True, parents=True)
         with open(folder / f"function.py", "w", encoding="utf-8") as f:
             f.write(python_code)
         constructed_context.append(f"Building in background ... OK") 
-        constructed_context.append(f"Function '{yaml_data['name']}' created successfully in '{folder}'!") 
+        constructed_context.append(f"Function '{yaml_data['name']}' created successfully in '{folder}'!\nTell the user where he can find the function call.") 
+        self.personality.add_chunk_to_message_content("\n")
+
         return constructed_context 
 
     def process_output(self, context: LollmsContextDetails, llm_output: str):

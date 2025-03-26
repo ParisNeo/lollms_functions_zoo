@@ -69,9 +69,15 @@ class MyFunction(FunctionCall): #use the same name as class_name from the yaml f
             ConfigTemplate([
             {
                     "name": "the_parameter_name", # spaces are forbidden in the name, use _
-                    "type": "int", # supported types are: int, float, str, bool
+                    "type": "str", # supported types are: int, float, str, bool (dict and list are not supported²)
+                    "value": "value string", # the value of the parameter
+                    "options": ["value string","another value string" ...], # only for str type if there are fixed possibilities 
+                    "help": "A help text to explain the parameter"                
+            },
+            {
+                    "name": "the_parameter_name", # spaces are forbidden in the name, use _
+                    "type": "int", # supported types are: int, float, str, bool (dict and list are not supported²)
                     "value": 7, # the value of the parameter
-                    "options": ["option1","option2" ...], # only for str type if there are fixed possibilities 
                     "help": "A help text to explain the parameter"                
             },
             ...
