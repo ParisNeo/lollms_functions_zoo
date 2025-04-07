@@ -27,9 +27,9 @@ class MusicGen(FunctionCall):
                              used for context like discussion folders.
         """
         super().__init__(
-            function_name="music_gen", # Unique identifier for this function call
-            app=app,
-            function_type=FunctionType.CLASSIC, # Standard execution type
+            "music_gen", # Unique identifier for this function call
+            app,
+            FunctionType.CLASSIC, # Standard execution type
             client=client,
             description="Generates music from a text prompt using the configured Text-to-Music (TTM) service."
         )
