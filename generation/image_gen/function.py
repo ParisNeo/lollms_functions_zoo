@@ -136,7 +136,7 @@ class ImageGen(FunctionCall):
 
                 # Escape potential HTML special characters in alt text
                 safe_alt_prompt = prompt.replace('"', '"').replace('<', '<').replace('>', '>')
-                html_output = f'<img src="{image_url}" class="album" alt="Generated image: {safe_alt_prompt[:80]}...">'
+                html_output = f'<img src="{image_url}" class="media" alt="Generated image: {safe_alt_prompt[:80]}...">'
 
                 self.personality.step_end("Painting image...", success=True)
                 return html_output

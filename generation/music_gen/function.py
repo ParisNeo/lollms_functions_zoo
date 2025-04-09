@@ -106,7 +106,7 @@ class MusicGen(FunctionCall):
                 negative_prompt=negative_prompt,
                 duration_s=duration_s,
                 seed=seed,
-                # output_dir=self.client.discussion.discussion_folder, # Option: Force output to discussion folder
+                output_dir=self.client.discussion.discussion_folder, # Option: Force output to discussion folder
                 output_file_name=output_file_name
             )
 
