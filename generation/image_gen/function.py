@@ -18,7 +18,7 @@ class ImageGen(FunctionCall):
     This class integrates the image generation process directly into its execute method.
     It takes prompts and image dimensions, calls the TTI service, generates the image,
     saves it to the discussion folder, and returns an HTML <img> tag string pointing
-    to the generated image, formatted for the DynamicUIRenderer's album view.
+    to the generated image, formatted for the DynamicUIRenderer's media view.
     If an error occurs, it returns a plain text error message.
     """
 
@@ -61,7 +61,7 @@ class ImageGen(FunctionCall):
                       Expected keys: 'prompt', 'negative_prompt', 'width', 'height', 'output_file_name'.
 
         Returns:
-            An HTML string '<img src="url" class="album" alt="...">` on success,
+            An HTML string '<img src="url" class="media" alt="...">` on success,
             or a plain text error message string on failure.
         """
         # --- Parameter Extraction and Validation ---
