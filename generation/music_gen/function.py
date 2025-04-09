@@ -166,7 +166,7 @@ class MusicGen(FunctionCall):
             personality.set_message_html(html_output)
 
             # Return a success message (useful for logging or non-UI contexts)
-            return f"Successfully generated music: {file_path.name}"
+            return f'<audio class="media" src="{url}" alt="{file_path.stem}">'
 
         except Exception as ex:
             # Ensure the step indicator is removed even if an error occurs
