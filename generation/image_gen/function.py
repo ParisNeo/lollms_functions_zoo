@@ -109,7 +109,7 @@ class ImageGen(FunctionCall):
                  # Create a default name based on the prompt (or fallback)
                  base_name = safe_filename(prompt[:50]) if prompt else "generated_image"
                  # Consider adding a timestamp or UUID for uniqueness if needed
-                 final_output_name = f"{base_name}_{self.client.discussion.current_message_id}" # Example using message ID
+                 final_output_name = f"{base_name}_{self.client.discussion.current_message.id}" # Example using message ID
 
             file_path, infos = tti_service.paint(
                 prompt,
