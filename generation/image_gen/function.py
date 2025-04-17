@@ -99,7 +99,7 @@ class ImageGen(FunctionCall):
         file_path: Optional[str] = None
         infos: Optional[Dict[str, Any]] = None # Placeholder for potential info from paint()
 
-        self.personality.step_start("Painting image...")
+        self.personality.step_start(f"Painting image using {tti_service.name}...")
         try:
             # Generate a safe filename if none is provided
             if output_file_name:
