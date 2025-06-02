@@ -17,7 +17,7 @@ import queue
 from lollms.config import TypedConfig, ConfigTemplate, BaseConfig
 
 class PersistentShell:
-    def __init__(self):
+    def __init__(self, client:Client):
         # Choose the shell based on the platform
         shell_cmd = "cmd.exe" if sys.platform == "win32" else "/bin/bash"
         self.proc = subprocess.Popen(
@@ -28,6 +28,7 @@ class PersistentShell:
             text=True,
             bufsize=1
         )
+        self.client = client
         self.output_queue = queue.Queue()
         # Start a thread to continuously read stdout
         self.output_thread = threading.Thread(target=self._enqueue_output, args=(self.proc.stdout, self.output_queue))
@@ -45,8 +46,17 @@ class PersistentShell:
         Note: This is a simplified approach; in a production scenario, you'd need a robust way
         to determine when the command has finished executing.
         """
+        path_str = self.client.discussion_path
+        if sys.platform == "win32":
+            # For cmd.exe, 'cd /d' changes drive and directory.
+            # We chain commands using '&'. '&&' could also be used for conditional execution.
+            full_command = f'cd /d {path_str} & {command}'
+        else:
+            # For bash/sh, 'cd' changes directory.
+            # We chain commands using ';'. '&&' for conditional execution.
+            full_command = f'cd {path_str} && {command}'
         if self.proc.stdin:
-            self.proc.stdin.write(command + "\n")
+            self.proc.stdin.write(full_command + "\n")
             self.proc.stdin.flush()
         output_lines = []
         try:
@@ -109,11 +119,11 @@ class ExecuteBashCommand(FunctionCall):
         """
         try:
             # Split the command into a list of arguments
-            shell = PersistentShell()
+            shell = PersistentShell(self.client)
 
             # The following command will change the directory and then clone the repository in that folder.
             output = shell.execute(command=command)
-            ai_output = self.personality.fast_gen(context.build_prompt(self.app.template,custom_entries=self.app.ai_full_header+context.ai_output+f"\nExecution output:\n```\n{output}\n```"+self.app.ai_full_header))
+            ai_output = self.personality.fast_gen(context.build_prompt(self.app.template,custom_entries=self.app.ai_full_header+context.ai_output+f"\nExecution output:\n```\n{output}\n```"+self.app.ai_full_header),callback=self.personality.sink)
             output = f"Execution output:\n```\n{output}\n```\n{ai_output}"    
             return output
         except subprocess.TimeoutExpired:
